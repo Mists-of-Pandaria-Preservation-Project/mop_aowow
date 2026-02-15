@@ -9,7 +9,14 @@ jobs:
     permissions:
       contents: write
     steps:
-      - run: gh repo sync $REPOSITORY -b upstream
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
+      - uses: actions/checkout@v4
+        with:
+          ref: upstream
+          fetch-depth: 0
+      
+      - name: Sync upstream branch with upstream repo's master
+        run: |
+          git remote add upstream-repo https://github.com/Sarjuuk/aowow.git
+          git fetch upstream-repo master
+          git reset --hard upstream-repo/master
+          git push origin upstream --force
